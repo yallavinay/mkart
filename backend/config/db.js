@@ -1,8 +1,7 @@
 const { Sequelize } = require('sequelize');
 const path = require('path');
 const dotenv = require('dotenv');
-// Load root .env first, then fallback to backend/.env
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
+// Load only the existing backend .env
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
 // Load MySQL env vars (with sensible defaults for local dev)

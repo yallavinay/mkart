@@ -2,8 +2,7 @@ const { Sequelize } = require('sequelize');
 const path = require('path');
 const dotenv = require('dotenv');
 
-// Load root .env first, then fallback to backend/.env
-dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
+// Load only backend .env
 dotenv.config({ path: path.join(__dirname, '.env') });
 
 const DB_HOST = process.env.DB_HOST || '127.0.0.1';
