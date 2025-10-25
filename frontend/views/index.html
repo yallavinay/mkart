@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MediCart - Your Trusted Medical Store</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+            --light-bg: #f8f9fa;
+            --dark-text: #2c3e50;
+            --gradient-primary: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            --gradient-success: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--light-bg);
+            color: var(--dark-text);
+        }
+
+        /* Header Styles */
+        .header {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 15px 0;
+            position: sticky;
+            top: 0; 
+            z-index: 1000; 
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+
+        .header-top {
+            background: rgba(0,0,0,0.1);
+            padding: 8px 0;
+            font-size: 0.9rem;
+        }
+
+        .header-main {
+            padding: 15px 0;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-decoration: none;
+            color: white;
+        }
+
+        .search-container {
+            position: relative;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Search Suggestions */
+        .search-suggestions {
+            position: absolute;
+            top: 110%;
+            left: 0;
+            right: 0;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            overflow: hidden;
+            z-index: 1001;
+            display: none;
+        }
+        .suggestion-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 12px;
+            cursor: pointer;
+        }
+        .suggestion-item:hover { background: #f7f9fc; }
+        .suggestion-thumb {
+            width: 40px; height: 40px; object-fit: cover; border-radius: 6px; flex: 0 0 40px;
+        }
+        .suggestion-name { font-weight: 600; font-size: 0.95rem; }
+        .suggestion-brand { font-size: 0.8rem; color: #7f8c8d; }
+
+        .search-input {
+            width: 100%;
+            padding: 12px 50px 12px 20px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            background: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .search-input:focus {
+            outline: none;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.2);
+        }
+
+        .search-btn {
+            position: absolute;
+            right: 5px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: var(--secondary-color);
+            border: none;
+            border-radius: 20px;
+            padding: 8px 15px;
+            color: white;
+            cursor: pointer;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+
+        .header-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .cart-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--danger-color);
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Navigation */
+        .nav-categories {
+            background: white;
+            padding: 15px 0;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .category-item {
+            text-decoration: none;
+            color: var(--dark-text);
+            padding: 10px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .category-item:hover {
+            background: var(--gradient-secondary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--gradient-primary);
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            opacity: 0.9;
+        }
+
+        .hero-btn {
+            background: white;
+            color: var(--primary-color);
+            padding: 15px 30px;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .hero-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        /* Features Section */
+        .features-section {
+            padding: 60px 0;
+            background: white;
+        }
+
+        .feature-card {
+            text-align: center;
+            padding: 30px 20px;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: white;
+            margin: 0 auto 20px;
+        }
+
+        .feature-icon.delivery { background: var(--gradient-success); }
+        .feature-icon.quality { background: var(--gradient-secondary); }
+        .feature-icon.support { background: var(--gradient-primary); }
+
+        /* Products Section */
+        .products-section {
+            padding: 60px 0;
+            background: var(--light-bg);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 50px;
+            color: var(--dark-text);
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+            height: 100%;
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .product-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .product-info {
+            padding: 20px;
+        }
+
+        .product-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark-text);
+        }
+
+        .product-brand {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--success-color);
+            margin-bottom: 15px;
+        }
+
+        .product-mrp {
+            text-decoration: line-through;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        .product-discount {
+            background: var(--danger-color);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: 10px;
+        }
+
+        .add-to-cart-btn {
+            width: 100%;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .add-to-cart-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .add-to-cart-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--primary-color);
+            color: white;
+            padding: 40px 0 20px;
+        }
+
+        .footer-section h5 {
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .footer-section a {
+            color: #bdc3c7;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #34495e;
+            padding-top: 20px;
+            margin-top: 30px;
+            text-align: center;
+            color: #bdc3c7;
+        }
+
+        /* Loading States */
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #7f8c8d;
+        }
+
+        .spinner-border {
+            width: 3rem;
+            height: 3rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .header-actions {
+                gap: 10px;
+            }
+            
+            .search-container {
+                margin: 10px 0;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary-color);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--primary-color);
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="header-top">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <span><i class="fas fa-phone"></i> +91 9876543210</span>
+                        <span class="ms-3"><i class="fas fa-envelope"></i> support@medicart.com</span>
+                    </div>
+                    <div class="col-md-6 text-end">
+                        <span>Free delivery on orders above ₹500</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="header-main">
+            <div class="container">
+                <div class="row align-items-center">
+                    <div class="col-md-3">
+                        <a href="/" class="logo">
+                            <i class="fas fa-pills"></i> MediCart
+                        </a>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="search-container">
+                            <input type="text" class="search-input" id="searchInput" placeholder="Search for medicines, brands, symptoms...">
+                            <button class="search-btn" id="searchBtn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                            <div id="searchSuggestions" class="search-suggestions"></div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="header-actions">
+                            <!-- Login/Register Buttons (shown when not logged in) -->
+                            <a href="/login" class="btn btn-outline-light btn-sm me-2 login-register-btn" id="loginBtn">
+                                <i class="fas fa-sign-in-alt"></i> Login
+                            </a>
+                            <a href="/register" class="btn btn-light btn-sm me-2 login-register-btn" id="registerBtn">
+                                <i class="fas fa-user-plus"></i> Register
+                            </a>
+                            
+                            <!-- User Actions (shown when logged in) -->
+                            <button class="header-btn user-action-btn" id="profileBtn" title="Profile" style="display: none;">
+                                <i class="fas fa-user"></i>
+                            </button>
+                            <button class="header-btn user-action-btn" id="ordersBtn" title="Orders" style="display: none;">
+                                <i class="fas fa-box"></i>
+                            </button>
+                            <div class="position-relative user-action-btn" style="display: none;">
+                                <button class="header-btn" id="cartBtn" title="Cart">
+                                    <i class="fas fa-shopping-cart"></i>
+                                    <span class="cart-badge" id="cartBadge">0</span>
+                                </button>
+                            </div>
+                            <button class="btn btn-outline-light btn-sm user-action-btn" id="logoutBtn" title="Logout" style="display: none;">
+                                <i class="fas fa-sign-out-alt"></i> Logout
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation Categories -->
+    <nav class="nav-categories">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex flex-wrap justify-content-center gap-3">
+                        <a href="#" class="category-item" data-category="prescription">
+                            <i class="fas fa-prescription-bottle-alt"></i> Prescription
+                        </a>
+                        <a href="#" class="category-item" data-category="otc">
+                            <i class="fas fa-pills"></i> OTC Medicines
+                        </a>
+                        <a href="#" class="category-item" data-category="supplements">
+                            <i class="fas fa-capsules"></i> Supplements
+                        </a>
+                        <a href="#" class="category-item" data-category="medical-devices">
+                            <i class="fas fa-stethoscope"></i> Medical Devices
+                        </a>
+                        <a href="#" class="category-item" data-category="personal-care">
+                            <i class="fas fa-spa"></i> Personal Care
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <h1 class="hero-title fade-in-up">Your Health, Our Priority</h1>
+                    <p class="hero-subtitle fade-in-up">Get authentic medicines delivered to your doorstep with MediCart</p>
+                    <button class="hero-btn fade-in-up" onclick="scrollToProducts()">Shop Now</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon delivery">
+                            <i class="fas fa-truck"></i>
+                        </div>
+                        <h4>Fast Delivery</h4>
+                        <p>Get your medicines delivered within 24 hours across India</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon quality">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>100% Authentic</h4>
+                        <p>All medicines are sourced directly from verified manufacturers</p>
+                    </div>
+                </div>
+                <div class="col-md-4 mb-4">
+                    <div class="feature-card">
+                        <div class="feature-icon support">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4>24/7 Support</h4>
+                        <p>Our medical experts are available round the clock to help you</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products-section" id="productsSection">
+        <div class="container">
+            <h2 class="section-title">Featured Medicines</h2>
+            
+            <!-- Filters -->
+            <div class="row mb-4">
+                <div class="col-md-4">
+                    <select class="form-select" id="categoryFilter" onchange="filterProducts()">
+                        <option value="">All Categories</option>
+                        <option value="prescription">Prescription</option>
+                        <option value="otc">OTC Medicines</option>
+                        <option value="supplements">Supplements</option>
+                        <option value="medical-devices">Medical Devices</option>
+                        <option value="personal-care">Personal Care</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <select class="form-select" id="sortFilter" onchange="sortProducts()">
+                        <option value="newest">Newest First</option>
+                        <option value="price-low">Price: Low to High</option>
+                        <option value="price-high">Price: High to Low</option>
+                        <option value="rating">Highest Rated</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    <div class="input-group">
+                        <span class="input-group-text">₹</span>
+                        <input type="number" class="form-control" id="priceMin" placeholder="Min" onchange="filterProducts()">
+                        <span class="input-group-text">-</span>
+                        <input type="number" class="form-control" id="priceMax" placeholder="Max" onchange="filterProducts()">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Grid -->
+            <div class="row" id="productsGrid">
+                <div class="col-12">
+                    <div class="loading">
+                        <div class="spinner-border text-primary" role="status"></div>
+                        <p class="mt-3">Loading medicines...</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Load More Button -->
+            <div class="text-center mt-4" id="loadMoreContainer" style="display: none;">
+                <button class="btn btn-primary btn-lg" onclick="loadMoreProducts()">
+                    <i class="fas fa-plus"></i> Load More
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-3 mb-4">
+                    <div class="footer-section">
+                        <h5><i class="fas fa-pills"></i> MediCart</h5>
+                        <p>Your trusted partner for authentic medicines and healthcare products.</p>
+                        <div class="social-links">
+                            <a href="#" class="me-3"><i class="fab fa-facebook"></i></a>
+                            <a href="#" class="me-3"><i class="fab fa-twitter"></i></a>
+                            <a href="#" class="me-3"><i class="fab fa-instagram"></i></a>
+                            <a href="#"><i class="fab fa-linkedin"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="footer-section">
+                        <h5>Quick Links</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">About Us</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                            <li><a href="#">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="footer-section">
+                        <h5>Categories</h5>
+                        <ul class="list-unstyled">
+                            <li><a href="#">Prescription Medicines</a></li>
+                            <li><a href="#">OTC Products</a></li>
+                            <li><a href="#">Supplements</a></li>
+                            <li><a href="#">Medical Devices</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-3 mb-4">
+                    <div class="footer-section">
+                        <h5>Contact Info</h5>
+                        <p><i class="fas fa-phone"></i> +91 9876543210</p>
+                        <p><i class="fas fa-envelope"></i> support@medicart.com</p>
+                        <p><i class="fas fa-map-marker-alt"></i> Mumbai, India</p>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MediCart. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/scripts/auth.js"></script>
+    <script src="/scripts/main.js"></script>
+</body>
+</html>

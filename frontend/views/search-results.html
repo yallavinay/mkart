@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    <style>
+        /* Add your styles here */
+        .medicine-item {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .sub3 {
+            margin-right: 20px;
+        }
+        .medicine-image {
+            width: 100px;
+            height: 100px;
+        }
+        .cart1 {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Search Results</h1>
+    <div id="medicine-list"></div>
+
+    <script>
+        // Extract query from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('query');
+
+        if (searchQuery) {
+            // Fetch medicines based on search query
+            fetch('/medicines')  // Assuming the backend returns a list of medicines
+                .then(response => response.json())
+                .then(data => {
+                    // Filter medicines based on search query
+                    const filteredMedicines = data.filter(medicine =>
+                        medicine.name.toLowerCase().includes(searchQuery.toLowerCase())
+                    );
+                    displayMedicines(filteredMedicines);
+                })
+                .catch(error => console.error('Error fetching medicines:', error));
+        } else {
+            document.getElementById('medicine-list').innerHTML = '<p>No search query provided.</p>';
+        }
+
+        function displayMedicines(medicines) {
+            const medicineList = document.getElementById('medicine-list');
+            medicineList.innerHTML = ''; // Clear previous results
+
+            // If no medicines are found, display a message
+            if (medicines.length === 0) {
+                medicineList.innerHTML = '<p>No medicines found.</p>';
+                return;
+            }
+
+            medicines.forEach(medicine => {
+                const medicineItem = document.createElement('div');
+                medicineItem.classList.add('medicine-item');
+
+                // Create the HTML structure for each medicine
+                medicineItem.innerHTML = `
+                    <div class="sub3">
+                        <img src="${medicine.image || medicine.image_url || 'https://via.placeholder.com/100?text=No+Img'}" alt="${medicine.name}" class="medicine-image" />
+                    </div>
+                    <div class="sub4">
+                        <h2 class="medicine-name">${medicine.name}</h2>
+                        <p class="medicine-price">Price: ₹${medicine.price}</p>
+                        <p class="medicine-availability">Availability: ${medicine.availability}</p>
+                        <input type="number" id="quantity-${medicine.id}" value="1" min="1" class="medicine-quantity" />
+                    </div>
+                    <button class="cart1" onclick="addToCart(${medicine.id}, '${medicine.name}', ${medicine.price}, '${medicine.image || medicine.image_url || 'https://via.placeholder.com/100?text=No+Img'}')">Add to Cart</button>
+                `;
+                medicineList.appendChild(medicineItem);
+            });
+        }
+
+        function addToCart(id, name, price, imageUrl) {
+            // Implement your logic for adding items to the cart
+            console.log(`Added to cart: ${name} (ID: ${id}, Price: ₹${price})`);
+        }
+    </script>
+</body>
+</html>

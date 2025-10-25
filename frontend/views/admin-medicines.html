@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Medicines - Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --admin-primary: #2c3e50;
+            --admin-secondary: #e74c3c;
+            --admin-accent: #f39c12;
+            --admin-bg: #ecf0f1;
+            --admin-text: #2c3e50;
+            --admin-success: #27ae60;
+            --admin-warning: #f39c12;
+            --admin-info: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--admin-bg);
+            color: var(--admin-text);
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--admin-primary), #34495e);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .admin-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .admin-logo i {
+            color: var(--admin-accent);
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--admin-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .admin-logout-btn {
+            background: var(--admin-secondary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .admin-logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .admin-page-title {
+            color: var(--admin-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-page-title i {
+            color: var(--admin-accent);
+        }
+
+        .admin-actions-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 10px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            width: 300px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+        }
+
+        .btn-primary {
+            background: var(--admin-primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #34495e;
+            transform: translateY(-1px);
+        }
+
+        .btn-success {
+            background: var(--admin-success);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover {
+            background: #229954;
+            transform: translateY(-1px);
+        }
+
+        .medicines-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table th {
+            background: var(--admin-primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid #ecf0f1;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .stock-low {
+            color: var(--admin-warning);
+            font-weight: 600;
+        }
+
+        .stock-out {
+            color: var(--admin-secondary);
+            font-weight: 600;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn-warning {
+            background: var(--admin-warning);
+            border: none;
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--admin-secondary);
+            border: none;
+            color: white;
+        }
+
+        .modal-content {
+            border-radius: 12px;
+            border: none;
+        }
+
+        .modal-header {
+            background: var(--admin-primary);
+            color: white;
+            border-radius: 12px 12px 0 0;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: var(--admin-text);
+            margin-bottom: 0.5rem;
+        }
+
+        .form-control {
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            padding: 10px 15px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+            box-shadow: 0 0 0 3px rgba(44, 62, 80, 0.1);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+
+        .spinner-border {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .page-link {
+            color: var(--admin-primary);
+            border-color: #ecf0f1;
+        }
+
+        .page-link:hover {
+            background: var(--admin-primary);
+            border-color: var(--admin-primary);
+            color: white;
+        }
+
+        .page-item.active .page-link {
+            background: var(--admin-primary);
+            border-color: var(--admin-primary);
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 1rem;
+            }
+            
+            .admin-actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .search-box {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-logo">
+                <i class="fas fa-pills"></i>
+                Medicine Management
+            </div>
+            <div class="admin-user-info">
+                <div class="admin-user-avatar" id="adminAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div id="adminName">Admin User</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8;">Administrator</div>
+                </div>
+                <button class="admin-logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <div class="admin-page-header">
+            <h1 class="admin-page-title">
+                <i class="fas fa-pills"></i>
+                Medicine Management
+            </h1>
+            <p class="text-muted mb-0">Add, edit, and manage medicine inventory for your medical e-commerce platform.</p>
+        </div>
+
+        <div class="admin-actions-bar">
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search medicines...">
+                <button class="btn btn-primary" id="searchBtn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </div>
+            <button class="btn btn-success" id="addMedicineBtn">
+                <i class="fas fa-plus"></i> Add New Medicine
+            </button>
+        </div>
+
+        <div class="medicines-table">
+            <div id="medicinesTable">
+                <div class="loading">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-3">Loading medicines...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Medicine Modal -->
+    <div class="modal fade" id="medicineModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Add New Medicine</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="medicineForm">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="medicineName" class="form-label">Medicine Name *</label>
+                                    <input type="text" class="form-control" id="medicineName" name="name" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="medicineBrand" class="form-label">Brand *</label>
+                                    <input type="text" class="form-control" id="medicineBrand" name="brand" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="genericName" class="form-label">Generic Name</label>
+                                    <input type="text" class="form-control" id="genericName" name="genericName">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="category" class="form-label">Category *</label>
+                                    <select class="form-control" id="category" name="category" required>
+                                        <option value="">Select Category</option>
+                                        <option value="prescription">Prescription</option>
+                                        <option value="otc">Over the Counter (OTC)</option>
+                                        <option value="supplements">Supplements</option>
+                                        <option value="medical-devices">Medical Devices</option>
+                                        <option value="personal-care">Personal Care</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="mrp" class="form-label">MRP (₹) *</label>
+                                    <input type="number" class="form-control" id="mrp" name="mrp" step="0.01" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="sellingPrice" class="form-label">Selling Price (₹) *</label>
+                                    <input type="number" class="form-control" id="sellingPrice" name="sellingPrice" step="0.01" required>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="stock" class="form-label">Stock Quantity *</label>
+                                    <input type="number" class="form-control" id="stock" name="stock" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="batchNumber" class="form-label">Batch Number *</label>
+                                    <input type="text" class="form-control" id="batchNumber" name="batchNumber" required>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="requiresPrescription" name="requiresPrescription">
+                            <label class="form-check-label" for="requiresPrescription">
+                                Requires Prescription
+                            </label>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="expiryDate" class="form-label">Expiry Date *</label>
+                                    <input type="date" class="form-control" id="expiryDate" name="expiryDate" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="manufacturer" class="form-label">Manufacturer</label>
+                                    <input type="text" class="form-control" id="manufacturer" name="manufacturer">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="imageFile" class="form-label">Medicine Image</label>
+                                    <input type="file" class="form-control" id="imageFile" accept="image/*">
+                                    <small class="text-muted">PNG, JPG up to ~2MB recommended</small>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label class="form-label">Preview</label>
+                                    <div>
+                                        <img id="imagePreview" src="https://via.placeholder.com/120?text=Preview" alt="Preview" style="width:120px;height:120px;object-fit:cover;border-radius:8px;border:1px solid #ecf0f1;" />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="description" class="form-label">Description</label>
+                            <textarea class="form-control" id="description" name="description" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="saveMedicineBtn">Save Medicine</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/admin-medicines.js"></script>
+</body>
+</html>

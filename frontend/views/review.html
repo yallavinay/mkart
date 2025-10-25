@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Order</title>
+    <link rel="stylesheet" href="/styles/styles.css"> <!-- Link to external CSS -->
+    <script defer src="/scripts/review.js"></script> <!-- Link to external JavaScript -->
+</head>
+<body>
+    <h1>Review Your Order</h1>
+    
+    <h2>Shipping Details</h2>
+    <div id="shipping-details"></div>
+
+    <h2>Products in Cart</h2>
+    <div id="cart-items"></div>
+
+    <h3 id="delivery-charge"></h3>
+    <h3 id="total-amount"></h3>
+
+    <button id="place-order-btn">Place Order</button>
+
+    <script src="/scripts/review.js"></script>
+</body>
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Page</title>
+    <link rel="stylesheet" href="/styles/styles.css">
+    <script defer src="/scripts/review.js"></script> <!-- Link to the review page script -->
+</head>
+<body>
+    <h1>Review Your Order</h1>
+    <div id="cart-items">
+        <h2>Items in Cart</h2>
+        <ul id="item-list"></ul>
+    </div>
+    <div id="shipping-details">
+        <h2>Shipping Details</h2>
+        <p id="address"></p>
+    </div>
+    <button id="place-order">Place Order</button>
+    <!-- Include this in your review.html file -->
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        try {
+            // Fetch cart items
+            const cartResponse = await fetch('/get-cart-items');
+            if (!cartResponse.ok) throw new Error('Failed to fetch cart items');
+    
+            const cartItems = await cartResponse.json();
+    
+            // Fetch shipping details
+            const shippingResponse = await fetch('/get-shipping-details');
+            if (!shippingResponse.ok) throw new Error('Failed to fetch shipping details');
+    
+            const shippingDetails = await shippingResponse.json();
+    
+            // Display cart items
+            const cartContainer = document.getElementById('cart-items');
+            cartItems.forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.innerHTML = `<h4>${item.name}</h4><p>Price: $${item.price}</p>`;
+                cartContainer.appendChild(itemDiv);
+            });
+    
+            // Display shipping details
+            const shippingContainer = document.getElementById('shipping-details');
+            shippingContainer.innerHTML = `
+                <h4>Shipping Details</h4>
+                <p>Name: ${shippingDetails.firstName} ${shippingDetails.lastName}</p>
+                <p>Mobile: ${shippingDetails.mobile}</p>
+                <p>Address: ${shippingDetails.address}, ${shippingDetails.district}, ${shippingDetails.state}, ${shippingDetails.pinCode}</p>
+            `;
+    
+        } catch (error) {
+            console.error('Error loading review page:', error);
+            document.getElementById('error-message').innerText = error.message;
+        }
+    });
+    </script>
+    
+</body>
+</html>

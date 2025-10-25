@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders - Admin Panel</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --admin-primary: #2c3e50;
+            --admin-secondary: #e74c3c;
+            --admin-accent: #f39c12;
+            --admin-bg: #ecf0f1;
+            --admin-text: #2c3e50;
+            --admin-success: #27ae60;
+            --admin-warning: #f39c12;
+            --admin-info: #3498db;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--admin-bg);
+            color: var(--admin-text);
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--admin-primary), #34495e);
+            color: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .admin-header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .admin-logo i {
+            color: var(--admin-accent);
+        }
+
+        .admin-user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-user-avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--admin-accent);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+
+        .admin-logout-btn {
+            background: var(--admin-secondary);
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .admin-logout-btn:hover {
+            background: #c0392b;
+            transform: translateY(-1px);
+        }
+
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .admin-page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .admin-page-title {
+            color: var(--admin-primary);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .admin-page-title i {
+            color: var(--admin-accent);
+        }
+
+        .admin-actions-bar {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .filter-box {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .search-input {
+            padding: 10px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            width: 200px;
+            transition: all 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--admin-primary);
+        }
+
+        .status-filter {
+            padding: 10px 15px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .btn-primary {
+            background: var(--admin-primary);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background: #34495e;
+            transform: translateY(-1px);
+        }
+
+        .orders-table {
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .table {
+            margin: 0;
+        }
+
+        .table th {
+            background: var(--admin-primary);
+            color: white;
+            border: none;
+            padding: 1rem;
+            font-weight: 600;
+        }
+
+        .table td {
+            padding: 1rem;
+            border-bottom: 1px solid #ecf0f1;
+            vertical-align: middle;
+        }
+
+        .table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .status-pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .status-confirmed {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status-shipped {
+            background: #e2e3f1;
+            color: #383d41;
+        }
+
+        .status-delivered {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-cancelled {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+
+        .btn-sm {
+            padding: 5px 10px;
+            font-size: 0.8rem;
+        }
+
+        .btn-success {
+            background: var(--admin-success);
+            border: none;
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--admin-warning);
+            border: none;
+            color: white;
+        }
+
+        .btn-info {
+            background: var(--admin-info);
+            border: none;
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--admin-secondary);
+            border: none;
+            color: white;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #7f8c8d;
+        }
+
+        .spinner-border {
+            width: 2rem;
+            height: 2rem;
+        }
+
+        .pagination {
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .page-link {
+            color: var(--admin-primary);
+            border-color: #ecf0f1;
+        }
+
+        .page-link:hover {
+            background: var(--admin-primary);
+            border-color: var(--admin-primary);
+            color: white;
+        }
+
+        .page-item.active .page-link {
+            background: var(--admin-primary);
+            border-color: var(--admin-primary);
+        }
+
+        .order-details {
+            font-size: 0.9rem;
+        }
+
+        .order-amount {
+            font-weight: 600;
+            color: var(--admin-success);
+        }
+
+        @media (max-width: 768px) {
+            .admin-container {
+                padding: 1rem;
+            }
+            
+            .admin-actions-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .filter-box {
+                flex-direction: column;
+            }
+            
+            .search-input {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="admin-header">
+        <div class="admin-header-content">
+            <div class="admin-logo">
+                <i class="fas fa-shopping-cart"></i>
+                Order Management
+            </div>
+            <div class="admin-user-info">
+                <div class="admin-user-avatar" id="adminAvatar">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div>
+                    <div id="adminName">Admin User</div>
+                    <div style="font-size: 0.8rem; opacity: 0.8;">Administrator</div>
+                </div>
+                <button class="admin-logout-btn" id="logoutBtn">
+                    <i class="fas fa-sign-out-alt"></i> Logout
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <div class="admin-container">
+        <div class="admin-page-header">
+            <h1 class="admin-page-title">
+                <i class="fas fa-shopping-cart"></i>
+                Order Management
+            </h1>
+            <p class="text-muted mb-0">View, process, and track customer orders and deliveries.</p>
+        </div>
+
+        <div class="admin-actions-bar">
+            <div class="filter-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search by order number...">
+                <select class="status-filter" id="statusFilter">
+                    <option value="">All Status</option>
+                    <option value="pending">Pending</option>
+                    <option value="confirmed">Confirmed</option>
+                    <option value="shipped">Shipped</option>
+                    <option value="delivered">Delivered</option>
+                    <option value="cancelled">Cancelled</option>
+                </select>
+                <button class="btn btn-primary" id="filterBtn">
+                    <i class="fas fa-filter"></i> Filter
+                </button>
+            </div>
+            <div>
+                <button class="btn btn-primary" id="refreshBtn">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+
+        <div class="orders-table">
+            <div id="ordersTable">
+                <div class="loading">
+                    <div class="spinner-border text-primary" role="status"></div>
+                    <p class="mt-3">Loading orders...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Order Details Modal -->
+    <div class="modal fade" id="orderDetailsModal" tabindex="-1">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Order Details</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <div class="d-flex justify-content-between">
+                <div>
+                  <div class="fw-bold" id="odOrderNumber">Order #</div>
+                  <div class="text-muted small" id="odDate">Date</div>
+                </div>
+                <div class="text-end">
+                  <div><span class="badge" id="odStatusBadge">STATUS</span></div>
+                  <div class="mt-2"><span class="badge bg-secondary" id="odPaymentBadge">PAYMENT</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="row g-3">
+              <div class="col-md-6">
+                <div class="bg-light p-3 rounded h-100">
+                  <h6 class="mb-2">Shipping Address</h6>
+                  <div id="odShippingAddress" class="small"></div>
+                </div>
+              </div>
+              <div class="col-md-6">
+                <div class="bg-light p-3 rounded h-100">
+                  <h6 class="mb-2">Billing Address</h6>
+                  <div id="odBillingAddress" class="small"></div>
+                </div>
+              </div>
+            </div>
+            <div class="mt-3">
+              <h6 class="mb-2">Items</h6>
+              <div class="table-responsive">
+                <table class="table table-sm">
+                  <thead>
+                    <tr>
+                      <th>Medicine</th>
+                      <th class="text-end">Price</th>
+                      <th class="text-end">Qty</th>
+                      <th class="text-end">Total</th>
+                    </tr>
+                  </thead>
+                  <tbody id="odItemsBody"></tbody>
+                </table>
+              </div>
+            </div>
+            <div class="d-flex justify-content-end mt-3">
+              <div class="w-100" style="max-width:320px;">
+                <div class="d-flex justify-content-between"><span>Subtotal</span><span id="odSubtotal">₹0</span></div>
+                <div class="d-flex justify-content-between"><span>Shipping</span><span id="odShippingCharges">₹0</span></div>
+                <div class="d-flex justify-content-between"><span>Discount</span><span id="odDiscount">₹0</span></div>
+                <hr>
+                <div class="d-flex justify-content-between fw-bold"><span>Total</span><span id="odFinalAmount">₹0</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Order Status Modal -->
+    <div class="modal fade" id="statusModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Update Order Status</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="statusForm">
+                        <div class="form-group mb-3">
+                            <label for="orderStatus" class="form-label">Order Status</label>
+                            <select class="form-control" id="orderStatus" name="orderStatus" required>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="shipped">Shipped</option>
+                                <option value="delivered">Delivered</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                        </div>
+                        <div class="form-group mb-3">
+                            <label for="trackingNumber" class="form-label">Tracking Number (Optional)</label>
+                            <input type="text" class="form-control" id="trackingNumber" name="trackingNumber" placeholder="Enter tracking number">
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" id="updateStatusBtn">Update Status</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/scripts/admin-orders.js"></script>
+</body>
+</html>

@@ -1,0 +1,32 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+}
+
+#medicine-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.medicine-item {
+    border: 1px solid #ccc;
+    padding: 20px;
+    width: 200px;
+    text-align: center;
+}
+
+.medicine-item img {
+    width: 100%;
+    height: 150px;
+    object-fit: cover;
+}
+
+.medicine-item h2 {
+    font-size: 18px;
+    margin: 10px 0;
+}
+
+.medicine-item p {
+    margin: 5px 0;
+}

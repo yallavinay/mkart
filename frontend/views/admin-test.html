@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Test - Medical E-commerce</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-button {
+            background: #2c3e50;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            margin: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .test-button:hover {
+            background: #34495e;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #e8f5e8;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Admin Dashboard Button Test</h1>
+        <p>Click the buttons below to test if they work:</p>
+        
+        <button class="test-button" onclick="testManageMedicines()">Test Manage Medicines</button>
+        <button class="test-button" onclick="testDirectRedirect()">Test Direct Redirect to Medicines</button>
+        <button class="test-button" onclick="testManageUsers()">Test Manage Users</button>
+        <button class="test-button" onclick="testManageOrders()">Test Manage Orders</button>
+        <button class="test-button" onclick="testViewAnalytics()">Test View Analytics</button>
+        
+        <div id="result" class="result" style="display: none;">
+            <h3>Test Result:</h3>
+            <p id="resultText"></p>
+        </div>
+    </div>
+
+    <script>
+        function testManageMedicines() {
+            console.log('Test: Manage Medicines clicked');
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('resultText').textContent = 'Manage Medicines button works! Would redirect to /admin-medicines';
+        }
+
+        function testManageUsers() {
+            console.log('Test: Manage Users clicked');
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('resultText').textContent = 'Manage Users button works! Would redirect to /admin-users';
+        }
+
+        function testManageOrders() {
+            console.log('Test: Manage Orders clicked');
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('resultText').textContent = 'Manage Orders button works! Would redirect to /admin-orders';
+        }
+
+        function testViewAnalytics() {
+            console.log('Test: View Analytics clicked');
+            document.getElementById('result').style.display = 'block';
+            document.getElementById('resultText').textContent = 'View Analytics button works! Would show analytics page';
+        }
+
+        function testDirectRedirect() {
+            console.log('Test: Direct redirect to medicines');
+            window.location.href = '/admin-medicines';
+        }
+    </script>
+</body>
+</html>
