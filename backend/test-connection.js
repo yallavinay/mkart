@@ -1,32 +1,43 @@
 const { Sequelize } = require('sequelize');
-require('dotenv').config();
+const path = require('path');
+const dotenv = require('dotenv');
 
-const MYSQL_HOST = process.env.MYSQL_HOST || '127.0.0.1';
-const MYSQL_PORT = parseInt(process.env.MYSQL_PORT || '3306', 10);
-const MYSQL_USER = process.env.MYSQL_USER || 'root';
-const MYSQL_PASSWORD = process.env.MYSQL_PASSWORD || '';
-const MYSQL_DB = process.env.MYSQL_DB || 'medical_ecommerce';
+// Load root .env first, then fallback to backend/.env
+dotenv.config({ path: path.join(__dirname, '..', '..', '.env') });
+dotenv.config({ path: path.join(__dirname, '.env') });
 
-async function testMySQL() {
-    console.log('Testing MySQL connection...');
-    const sequelize = new Sequelize(MYSQL_DB, MYSQL_USER, MYSQL_PASSWORD, {
-        host: MYSQL_HOST,
-        port: MYSQL_PORT,
-        dialect: 'mysql',
+const DB_HOST = process.env.DB_HOST || '127.0.0.1';
+const DB_PORT = parseInt(process.env.DB_PORT || '5432', 10);
+const DB_USER = process.env.DB_USER || 'postgres';
+const DB_PASSWORD = process.env.DB_PASSWORD || '';
+const DB_NAME = process.env.DB_NAME || 'medical_ecommerce';
+
+async function testPostgres() {
+    console.log('Testing PostgreSQL connection...');
+    const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
+        host: DB_HOST,
+        port: DB_PORT,
+        dialect: 'postgres',
         logging: false,
+        dialectOptions: {
+            ssl: {
+                require: true,
+                rejectUnauthorized: false,
+            },
+        },
     });
 
     try {
         await sequelize.authenticate();
-        console.log('✅ Connected to MySQL successfully');
-        console.log(`Host: ${MYSQL_HOST}:${MYSQL_PORT}`);
-        console.log(`Database: ${MYSQL_DB}`);
+        console.log('✅ Connected to PostgreSQL successfully');
+        console.log(`Host: ${DB_HOST}:${DB_PORT}`);
+        console.log(`Database: ${DB_NAME}`);
     } catch (error) {
-        console.error('❌ MySQL connection failed:', error.message);
+        console.error('❌ PostgreSQL connection failed:', error.message);
     } finally {
         await sequelize.close();
         console.log('Connection closed');
     }
 }
 
-testMySQL();
+testPostgres();
